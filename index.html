@@ -173,28 +173,28 @@ const ENEMY = {
   skitter:{ name:'Skitter', r:9,  hp:6,  spd:135,dmg:6,  xp:1, color:'#f5f', glow:'#f0f' },
   brute:  { name:'Brute',   r:22, hp:70, spd:42, dmg:18, xp:5, color:'#fa3', glow:'#f80', armor:3 },
   spitter:{ name:'Spitter', r:13, hp:18, spd:55, dmg:7,  xp:2, color:'#ff5', glow:'#ff0', ranged:true },
-  queen:  { name:'Hive Queen', r:46, hp:1800, spd:48, dmg:30, xp:60, color:'#f35', glow:'#f03', armor:4, boss:true }
+  queen:  { name:'Hive Queen', r:46, hp:1400, spd:48, dmg:30, xp:60, color:'#f35', glow:'#f03', armor:4, boss:true }
 };
 
 const WEAPONS = {
   blaster:{ name:'Plasma Blaster', icon:'◆', color:'#0ff', max:8,
-    desc:l=>['Fires plasma bolts at the nearest alien.','+1 bolt','+30% damage','-15% cooldown','+1 bolt, +1 pierce','+30% damage','+1 bolt','Overcharged: +50% damage, faster bolts'][l] },
+    desc:l=>['Fires plasma bolts at the nearest alien.','+1 bolt','+50% damage','-30% cooldown','+1 bolt, +2 pierce','+50% damage','+1 bolt','Overcharged: x2 damage, +1 bolt, faster bolts'][l] },
   drones:{ name:'Orbital Drones', icon:'✦', color:'#f5f', max:8,
-    desc:l=>['Two attack drones orbit you, shredding anything they touch.','+1 drone','+25% damage, wider orbit','+1 drone','Faster orbit, +25% damage','+1 drone','+30% damage','Swarm Protocol: +2 drones'][l] },
+    desc:l=>['Two attack drones orbit you, shredding anything they touch.','+1 drone','+40% damage, wider orbit','+1 drone','Much faster orbit, +40% damage','+1 drone','+45% damage','Swarm Protocol: +2 drones'][l] },
   field:{ name:'Energy Field', icon:'◎', color:'#5f8', max:8,
-    desc:l=>['A shock field damages nearby aliens over time.','+20% radius','+40% damage','+20% radius','Pulses slow enemies','+40% damage','+25% radius','Singularity: x2 damage'][l] },
+    desc:l=>['A shock field damages nearby aliens over time.','+30% radius','+60% damage','+30% radius','Pulses slow enemies','+60% damage','+35% radius','Singularity: x2.5 damage'][l] },
   railgun:{ name:'Railgun', icon:'═', color:'#ff5', max:8,
-    desc:l=>['Fires a piercing hyper-velocity beam through the swarm.','+40% damage','-20% cooldown','+1 beam','+40% damage','Wider beam','+1 beam','Mass Driver: x2 damage'][l] },
+    desc:l=>['Fires a piercing hyper-velocity beam through the swarm.','+60% damage','-35% cooldown','+1 beam','+60% damage','Much wider beam','+1 beam','Mass Driver: x2.5 damage'][l] },
   nova:{ name:'Nova Grenade', icon:'✸', color:'#f84', max:8,
-    desc:l=>['Lobs a plasma grenade that detonates in a blast radius.','+1 grenade','+30% blast radius','+40% damage','-20% cooldown','+1 grenade','+40% damage','Supernova: huge blast'][l] }
+    desc:l=>['Lobs a plasma grenade that detonates in a blast radius.','+1 grenade','+45% blast radius','+60% damage','-35% cooldown','+1 grenade','+60% damage','Supernova: huge blast, +1 grenade'][l] }
 };
 const PASSIVES = {
-  power:{ name:'Power Core', icon:'⚡', max:5, desc:'+12% weapon damage' },
-  boots:{ name:'Servo Boots', icon:'»', max:5, desc:'+10% move speed' },
-  magnet:{ name:'Tractor Beam', icon:'⊕', max:5, desc:'+35% pickup radius' },
-  armor:{ name:'Nano Armor', icon:'▣', max:5, desc:'+20 max HP, +1 armor, +0.3 HP/s regen' },
-  overclock:{ name:'Overclock Chip', icon:'↻', max:5, desc:'-8% weapon cooldowns' },
-  scanner:{ name:'XP Amplifier', icon:'✧', max:5, desc:'+12% energy gained' }
+  power:{ name:'Power Core', icon:'⚡', max:5, desc:'+18% weapon damage' },
+  boots:{ name:'Servo Boots', icon:'»', max:5, desc:'+15% move speed' },
+  magnet:{ name:'Tractor Beam', icon:'⊕', max:5, desc:'+50% pickup radius' },
+  armor:{ name:'Nano Armor', icon:'▣', max:5, desc:'+30 max HP, +1.5 armor, +0.5 HP/s regen' },
+  overclock:{ name:'Overclock Chip', icon:'↻', max:5, desc:'-12% weapon cooldowns' },
+  scanner:{ name:'XP Amplifier', icon:'✧', max:5, desc:'+18% energy gained' }
 };
 
 // ---------- game state ----------
@@ -207,7 +207,7 @@ function showBest(){ document.getElementById('best').textContent = best ? 'Best 
 showBest();
 
 function newPlayer(){
-  return { x:0, y:0, r:13, hp:100, maxHp:100, spd:170, armor:0, regen:0, magnet:110, xp:0, lvl:1, next:5,
+  return { x:0, y:0, r:13, hp:100, maxHp:100, spd:170, armor:0, regen:0, magnet:110, xp:0, lvl:1, next:4,
     face:{x:1,y:0}, inv:0, dmgMul:1, cdMul:1, xpMul:1,
     weapons:{ blaster:{lvl:1,cd:0} }, passives:{}, anim:0 };
 }
@@ -257,7 +257,7 @@ function gameOver(win){
 let currentChoices = [];
 function gainXP(v){
   P.xp += v * P.xpMul;
-  while (P.xp >= P.next){ P.xp -= P.next; P.lvl++; P.next = Math.floor(4 + P.lvl*3 + Math.pow(P.lvl,1.5)); pendingLevels++; }
+  while (P.xp >= P.next){ P.xp -= P.next; P.lvl++; P.next = Math.floor(3 + P.lvl*2.4 + Math.pow(P.lvl,1.6)); pendingLevels++; }
 }
 function buildChoices(){
   const pool = [];
@@ -290,7 +290,7 @@ function openLevelUp(){
     if (c.type==='w'){ const W_=WEAPONS[c.k]; t=W_.icon+' '+W_.name; lv=c.lvl?'Level '+(c.lvl+1):'NEW WEAPON'; desc=W_.desc(c.lvl); cls+=' weapon'+(c.lvl?'':' new'); }
     else if (c.type==='p'){ const Pp=PASSIVES[c.k]; t=Pp.icon+' '+Pp.name; lv=c.lvl?'Level '+(c.lvl+1):'NEW MODULE'; desc=Pp.desc; if(!c.lvl) cls+=' new'; }
     else if (c.type==='heal'){ t='✚ Med Injector'; lv='Restore'; desc='Heal 40% HP'; }
-    else { t='◈ Energy Surge'; lv='Bonus'; desc='+25% damage for the rest of the run'; }
+    else { t='◈ Energy Surge'; lv='Bonus'; desc='+35% damage for the rest of the run'; }
     d.className=cls;
     d.innerHTML=`<span class="k">[${i+1}]</span><div class="t">${t}</div><div class="lv">${lv}</div><div class="d">${desc}</div>`;
     d.onclick=()=>{ ensureAudio(); pickChoice(i); };
@@ -303,15 +303,15 @@ function pickChoice(i){
   if (c.type==='w'){ if (P.weapons[c.k]) P.weapons[c.k].lvl++; else P.weapons[c.k]={lvl:1,cd:0,ang:0}; }
   else if (c.type==='p'){
     P.passives[c.k]=(P.passives[c.k]||0)+1;
-    if (c.k==='power') P.dmgMul+=.12;
-    if (c.k==='boots') P.spd*=1.10;
-    if (c.k==='magnet') P.magnet*=1.35;
-    if (c.k==='armor'){ P.maxHp+=20; P.hp+=20; P.armor+=1; P.regen+=.3; }
-    if (c.k==='overclock') P.cdMul*=.92;
-    if (c.k==='scanner') P.xpMul+=.12;
+    if (c.k==='power') P.dmgMul+=.18;
+    if (c.k==='boots') P.spd*=1.15;
+    if (c.k==='magnet') P.magnet*=1.5;
+    if (c.k==='armor'){ P.maxHp+=30; P.hp+=30; P.armor+=1.5; P.regen+=.5; }
+    if (c.k==='overclock') P.cdMul*=.88;
+    if (c.k==='scanner') P.xpMul+=.18;
   }
   else if (c.type==='heal') P.hp=Math.min(P.maxHp,P.hp+P.maxHp*.4);
-  else P.dmgMul+=.25;
+  else P.dmgMul+=.35;
   pendingLevels--;
   hideAll(); state='play'; syncHud();
 }
@@ -320,9 +320,9 @@ function pickChoice(i){
 function spawnEnemy(type, opts={}){
   const D = ENEMY[type];
   const a = Math.random()*TAU, R = Math.hypot(VW,VH)/2 + 60;
-  const scale = 1 + time/120 + Math.pow(time/300,2);      // hp scaling
-  const e = { type, x:P.x+Math.cos(a)*R, y:P.y+Math.sin(a)*R, r:D.r, hp:D.hp*(D.boss?1+time/300:scale), spd:D.spd*rand(.9,1.1)*(1+Math.min(time/600,.35)),
-    dmg:D.dmg*(1+time/400), xp:D.xp, color:D.color, glow:D.glow, armor:D.armor||0, boss:!!D.boss, ranged:!!D.ranged,
+  const scale = 1 + time/240 + Math.pow(time/280,2);      // hp scaling
+  const e = { type, x:P.x+Math.cos(a)*R, y:P.y+Math.sin(a)*R, r:D.r, hp:D.hp*(D.boss?1+time/250:scale), spd:D.spd*rand(.9,1.1)*(1+Math.min(time/900,.3)),
+    dmg:D.dmg*(1+time/700), xp:D.xp, color:D.color, glow:D.glow, armor:D.armor||0, boss:!!D.boss, ranged:!!D.ranged,
     flash:0, kx:0, ky:0, slow:0, ph:Math.random()*TAU, shoot:rand(1,3), hitCd:{} };
   e.maxHp = e.hp;
   Object.assign(e, opts);
@@ -331,28 +331,28 @@ function spawnEnemy(type, opts={}){
 }
 function spawnLogic(dt){
   const t = time;
-  const rate = 0.8 + t/40 + Math.pow(t/110,2);            // enemies per second
+  const rate = 0.7 + t/80 + Math.pow(t/130,2);            // enemies per second
   spawnTimer += dt*rate;
-  const cap = 140 + Math.floor(t/2);
+  const cap = 90 + Math.floor(t/2.5);
   while (spawnTimer >= 1){
     spawnTimer -= 1;
-    if (enemies.length >= Math.min(cap, 380)) break;
+    if (enemies.length >= Math.min(cap, 330)) break;
     const r = Math.random();
     let type = 'crawler';
-    if (t > 25 && r < .18 + Math.min(t/1200,.17)) type='skitter';
-    else if (t > 60 && r < .26 + Math.min(t/1500,.12)) type='spitter';
-    else if (t > 90 && r < .34 + Math.min(t/1000,.14)) type='brute';
+    if (t > 40 && r < .18 + Math.min(t/1200,.17)) type='skitter';
+    else if (t > 90 && r < .26 + Math.min(t/1500,.12)) type='spitter';
+    else if (t > 150 && r < .34 + Math.min(t/1000,.14)) type='brute';
     spawnEnemy(type);
   }
   // swarm burst: ring of skitters every 45s
-  if (Math.floor(t/45) !== Math.floor((t-dt)/45) && t > 40){
-    const n = 14 + Math.floor(t/30);
+  if (Math.floor(t/60) !== Math.floor((t-dt)/60) && t > 55){
+    const n = 10 + Math.floor(t/40);
     for (let i=0;i<n;i++){ const a=i/n*TAU, R=Math.hypot(VW,VH)/2+40; spawnEnemy('skitter',{x:P.x+Math.cos(a)*R,y:P.y+Math.sin(a)*R}); }
     texts.push({x:P.x,y:P.y-60,t:'SWARM INCOMING',c:'#f5f',life:2,big:true});
   }
   // mini-boss every 2 minutes
   bossTimer += dt;
-  if (bossTimer >= 120){
+  if (bossTimer >= 150){
     bossTimer = 0;
     spawnEnemy('queen'); sfx('boss'); shake = 12;
     texts.push({x:P.x,y:P.y-80,t:'⚠ HIVE QUEEN DETECTED ⚠',c:'#f35',life:3,big:true});
@@ -392,11 +392,11 @@ function nearestEnemy(x,y,maxD=1e9, exclude){
 // ---------- weapons ----------
 function weaponStats(k,l){
   switch(k){
-    case 'blaster': return { count:1+(l>=2)+(l>=5)+(l>=7), dmg:10*(1+.3*(l>=3)+.3*(l>=6))*(l>=8?1.5:1), cd:.5*(l>=4?.85:1), pierce:(l>=5?2:1), spd:l>=8?720:560 };
-    case 'drones': return { count:2+(l>=2)+(l>=4)+(l>=6)+(l>=8?2:0), dmg:9*(1+.25*(l>=3)+.25*(l>=5)+.3*(l>=7)), rad:70+(l>=3?20:0)+l*3, spd:l>=5?3.6:2.6 };
-    case 'field': return { rad:65*(1+.2*(l>=2)+.2*(l>=4)+.25*(l>=7)), dmg:7*(1+.4*(l>=3)+.4*(l>=6))*(l>=8?2:1), slow:l>=5 };
-    case 'railgun': return { dmg:32*(1+.4*(l>=2)+.4*(l>=5))*(l>=8?2:1), cd:2.4*(l>=3?.8:1), count:1+(l>=4)+(l>=7), w:l>=6?16:8 };
-    case 'nova': return { count:1+(l>=2)+(l>=6), rad:70*(l>=3?1.3:1)*(l>=8?1.6:1), dmg:28*(1+.4*(l>=4)+.4*(l>=7))*(l>=8?1.4:1), cd:2.8*(l>=5?.8:1) };
+    case 'blaster': return { count:1+(l>=2)+(l>=5)+(l>=7)+(l>=8), dmg:12*(1+.5*(l>=3)+.5*(l>=6))*(l>=8?2:1), cd:.45*(l>=4?.7:1), pierce:(l>=5?3:1), spd:l>=8?760:580 };
+    case 'drones': return { count:2+(l>=2)+(l>=4)+(l>=6)+(l>=8?2:0), dmg:12*(1+.4*(l>=3)+.4*(l>=5)+.45*(l>=7)), rad:75+(l>=3?30:0)+l*4, spd:l>=5?4.2:2.8 };
+    case 'field': return { rad:70*(1+.3*(l>=2)+.3*(l>=4)+.35*(l>=7)), dmg:9*(1+.6*(l>=3)+.6*(l>=6))*(l>=8?2.5:1), slow:l>=5 };
+    case 'railgun': return { dmg:40*(1+.6*(l>=2)+.6*(l>=5))*(l>=8?2.5:1), cd:2.0*(l>=3?.65:1), count:1+(l>=4)+(l>=7), w:l>=6?22:10 };
+    case 'nova': return { count:1+(l>=2)+(l>=6)+(l>=8), rad:80*(l>=3?1.45:1)*(l>=8?1.6:1), dmg:34*(1+.6*(l>=4)+.6*(l>=7))*(l>=8?1.5:1), cd:2.4*(l>=5?.65:1) };
   }
 }
 function updateWeapons(dt){
@@ -418,7 +418,7 @@ function updateWeapons(dt){
     }
     else if (k==='field'){
       w.tick = (w.tick||0) - dt; w.rad = s.rad;
-      if (w.tick<=0){ w.tick=.4*P.cdMul; w.pulse=1;
+      if (w.tick<=0){ w.tick=.35*P.cdMul; w.pulse=1;
         for (const e of enemies){ if (e.dead) continue; const rr=s.rad+e.r; if (dist2(e,P)<rr*rr){ damageEnemy(e,s.dmg); if (s.slow) e.slow=.6; } } }
       w.pulse = Math.max(0,(w.pulse||0)-dt*2.5);
     }
@@ -495,7 +495,7 @@ function update(dt){
       e.shoot-=dt; if (e.shoot<=0 && d<500){ e.shoot=rand(2.2,3.2); eBullets.push({x:e.x,y:e.y,vx:dx/d*220,vy:dy/d*220,r:5,dmg:e.dmg,life:3}); }
     }
     if (e.boss){
-      e.shoot-=dt; if (e.shoot<=0){ e.shoot=2.6; const n=16; for(let i=0;i<n;i++){const a=i/n*TAU+e.ph; eBullets.push({x:e.x,y:e.y,vx:Math.cos(a)*180,vy:Math.sin(a)*180,r:6,dmg:12,life:4});} e.ph+=.2;
+      e.shoot-=dt; if (e.shoot<=0){ e.shoot=2.6; const n=16; for(let i=0;i<n;i++){const a=i/n*TAU+e.ph; eBullets.push({x:e.x,y:e.y,vx:Math.cos(a)*170,vy:Math.sin(a)*170,r:6,dmg:10,life:4});} e.ph+=.2;
         if (Math.random()<.5) for(let i=0;i<4;i++) spawnEnemy('crawler',{x:e.x+rand(-40,40),y:e.y+rand(-40,40)}); }
     }
     e.x+=(vx+e.kx)*dt; e.y+=(vy+e.ky)*dt;
